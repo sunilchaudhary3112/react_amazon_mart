@@ -1,7 +1,10 @@
 import React from 'react';
+import { BrowserRouter, Route, Link } from "react-router-dom";
 import logo from './logo.svg';
 import './index.css';
-import data  from "./data";
+import data from "./data";
+import HomeScreen from "./Screens/HomeScreen";
+import ProductScreen from "./Screens/ProductScreen";
 
 function App() {
   const openMenu = () => {
@@ -12,57 +15,46 @@ function App() {
     document.querySelector(".sidebar").classList.remove("open")
   }
   return (
-    <div className="grid-container">
-      <header className="header">
-        <div className="brand">
-          <button onClick={openMenu}>
-            &#9776;
+    <BrowserRouter>
+      <div className="grid-container">
+        <header className="header">
+          <div className="brand">
+            <button onClick={openMenu}>
+              &#9776;
             </button>
-          <a href="index.html">Amazon Mart</a>
-        </div>
-        <div className="header-links">
-          <a href="cart.html">Cart</a>
-          <a href="signin.html">Sign In</a>
-        </div>
-      </header>
-      <aside className="sidebar">
-        <h3>Shopping Categories</h3>
-        <button className="sidebar-close-button" onClick={closeMenu}>x</button>
-        <ul>
-          <li>
-            <a href="index.html">pants</a>
-          </li>
-          <li>
-            <a href="index.html">shirts</a>
-          </li>
-        </ul>
-      </aside>
-
-      <main className="main">
-        <div className="content">
-          <ul className="products">
-            {
-              data.products.map(product =>
-                <li className="product">
-                  <img className="product-image" src={product.image} alt="product"></img>
-                  <div className="product-name">
-                    <a href="product.html">{product.name}</a>
-                  </div>
-                  <div className="product-brand">{product.brand}</div>
-                  <div className="product-price">{product.price}</div>
-                  <div className="product-rating">{product.rating} Star {product.numReviews} Reviews</div>
-                </li>
-              )
-            }
-
+           <Link to="/" >amazon mart</Link>
+          </div>
+          <div className="header-links">
+            <a href="cart.html">Cart</a>
+            <a href="signin.html">Sign In</a>
+          </div>
+        </header>
+        <aside className="sidebar">
+          <h3>Shopping Categories</h3>
+          <button className="sidebar-close-button" onClick={closeMenu}>x</button>
+          <ul>
+            <li>
+              <a href="index.html">pants</a>
+            </li>
+            <li>
+              <a href="index.html">shirts</a>
+            </li>
           </ul>
-        </div>
-      </main>
+        </aside>
 
-      <footer className="footer">
-        All rights reserved
+        <main className="main">
+          <div className="content">
+            <Route path="/product/:id" component={ProductScreen} />
+            <Route path="/" exact={true} component={HomeScreen} />
+            
+          </div>
+        </main>
+
+        <footer className="footer">
+          All rights reserved
             </footer>
-    </div>
+      </div>
+    </BrowserRouter>
   );
 }
 
