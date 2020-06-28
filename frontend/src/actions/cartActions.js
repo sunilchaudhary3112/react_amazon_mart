@@ -1,7 +1,8 @@
 import axios from 'axios';
-import { CART_ADD_ITEM } from '../actionTypes/cartActionTypes';
+import Cookie from 'js-cookie';
+import { CART_ADD_ITEM, CART_REMOVE_ITEM } from '../actionTypes/cartActionTypes';
 
-const addToCart = (productId, qty) => async (dispatch) => {
+const addToCart = (productId, qty) => async (dispatch, getState) => {
     try {
         const { data } = await axios.get("/api/product/" + productId);
         dispatch({
@@ -14,9 +15,19 @@ const addToCart = (productId, qty) => async (dispatch) => {
                 qty
             }
         });
+        const { cart: { cartItems } } = getState();
+        Cookie.set("cartItems", JSON.stringify(cartItems))
+
     } catch (error) {
 
     }
 }
 
-export default addToCart;
+const removeFromCart = (productId) => (dispatch, getState) => {
+    dispatch({ type: CART_REMOVE_ITEM, payload: productId });
+    const { cart: { cartItems } } = getState();
+    Cookie.set("cartItems", JSON.stringify(cartItems))
+}
+
+// export default addToCart;
+export { addToCart, removeFromCart }

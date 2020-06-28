@@ -1,7 +1,9 @@
 import React from "react";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import addToCart from "../actions/cartActions";
+import { addToCart, removeFromCart } from "../actions/cartActions";
+import '../index.css';
+import { Link } from "react-router-dom";
 
 function CartScreen(props) {
 
@@ -10,6 +12,14 @@ function CartScreen(props) {
     const productId = props.match.params.id;
     const qty = props.location.search ? Number(props.location.search.split("=")[1]) : 1;
     const dispatch = useDispatch();
+    const removeFromCartHandler = (productId) => {
+        dispatch(removeFromCart(productId));
+    }
+
+    const checkoutHandler = () => {
+        props.history.push("/signin?redirect=shipping");
+    }
+
     useEffect(() => {
         if (productId) {
             dispatch(addToCart(productId, qty));
@@ -27,6 +37,7 @@ function CartScreen(props) {
                         Price
                     </div>
                 </li>
+
                 {
                     cartItems.length === 0 ?
                         <div>
@@ -34,36 +45,45 @@ function CartScreen(props) {
                     </div>
                         :
                         cartItems.map(item =>
-                            <div>
-                                <img src={item.image} alt="product" />
+                            <li>
+                                <div className="cart-image">
+                                    <img src={item.image} alt="product" />
+                                </div>
                                 <div className="cart-name">
                                     <div>
-                                        {item.name}
+                                        <Link to={"/product/" + item.product} >
+                                            {item.name}
+                                        </Link>
+
                                     </div>
                                     <div>
                                         Qty:
-                                        <select>
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
+                                        <select value={item.qty} onChange={(e) => dispatch(addToCart(item.product, e.target.value))}>
+                                            {[...Array(item.countInStock).keys()].map(x =>
+                                                <option key={x + 1} value={x + 1}>{x + 1}</option>
+                                            )}
                                         </select>
+                                        <button type="button" className="button" onClick={() => removeFromCartHandler(item.product)}>
+                                            Delete
+                                        </button>
                                     </div>
                                 </div>
-                                <div>
-                                    {item.price}
+                                <div className="cart-price">
+                                    ${item.qty * item.price}
                                 </div>
-                            </div>
+                            </li>
                         )
                 }
+
             </ul>
         </div>
         <div className="cart-action">
             <h3>
-                Subtotal({cartItems.reduce((a, c) => a + c.qty, 0)} items)
+                Subtotal({cartItems.reduce((a, c) => a + Number(c.qty), 0)} items)
                 :
                 $ {cartItems.reduce((a, c) => a + c.price * c.qty, 0)}
             </h3>
-            <button className="button primary" disabled={cartItems.length === 0}>
+            <button onClick={checkoutHandler} className="button primary full-width" disabled={cartItems.length === 0}>
                 Proceed to Checkout
             </button>
         </div>
