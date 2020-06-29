@@ -1,7 +1,16 @@
 import express from 'express';
 import data from './data';
+import mongoose from "mongoose";
+import userRoute from './routes/userRoute';
+
+const mongodbUrl = 'mongodb+srv://sunil:Super123@cluster0-h3mdq.mongodb.net/amazon_db?retryWrites=true&w=majority';
+mongoose.connect(mongodbUrl, {
+    useNewUrlParser: true
+}).catch(error => console.log(error.reason));
 
 const app = express();
+
+app.use("/api/users", userRoute);
 
 app.get("/api/products", (req, res) => {
     res.send(data.products)
